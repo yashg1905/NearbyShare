@@ -220,10 +220,15 @@ public class MainActivity extends ConnectionsActivity {
     sendFile_btn.setOnClickListener(new View.OnClickListener() {
       @Override
       public void onClick(View v) {
-        if(getState() == State.CONNECTED){
+        if(getState() == State.CONNECTED ){
 //          Button sendFile_btn = findViewById(R.id.send_file);
 //          sendFile_btn.setEnabled(true);
+          if(dataUri!=null)
           sendFile();
+          else {
+            Toast toast=Toast. makeText(getApplicationContext(),"File no selected",Toast.LENGTH_SHORT);
+            toast.show();
+          }
         }
         else {
           Toast toast=Toast. makeText(getApplicationContext(),"Device is not connected",Toast.LENGTH_SHORT);
