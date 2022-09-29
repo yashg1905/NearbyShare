@@ -50,9 +50,9 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
 
-        android:layout_marginRight="10dp"
-        android:layout_marginTop="150dp"
         android:layout_marginLeft="100dp"
+        android:layout_marginTop="150dp"
+        android:layout_marginRight="10dp"
         android:layout_marginBottom="250dp"
         android:text="Send" />
 
@@ -69,7 +69,7 @@
         android:layout_width="207dp"
         android:layout_height="wrap_content"
         android:layout_marginLeft="100dp"
-        android:layout_marginTop="200dp"
+        android:layout_marginTop="190dp"
         android:layout_marginRight="10dp"
         android:layout_marginBottom="250dp" />
 
