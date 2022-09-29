@@ -41,6 +41,8 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.nio.charset.StandardCharsets;
+import java.util.Objects;
 import java.util.Random;
 
 
@@ -166,12 +168,9 @@ public class MainActivity extends ConnectionsActivity {
       Payload filenameBytesPayload =
               Payload.fromBytes(filenameMessage.getBytes());
 
-      if(getState()==State.CONNECTED) {
-          send(filenameBytesPayload);
-
-          // Finally, send the file payload.
+       send(filenameBytesPayload);
           send(filePayload);
-      }
+      dataUri=null;
   }
   /** For recording audio as the user speaks. */
   @Nullable private AudioRecorder mRecorder;
@@ -573,12 +572,7 @@ public void onActivityResult(int requestCode, int resultCode, Intent resultData)
   }
 
   /** {@see ConnectionsActivity#onReceive(Endpoint, Payload)} */
-//  @Override
-//  protected void onPayloadReceived(String endpointId, Payload payload) {
-//    if (payload.getType() == Payload.Type.BYTES) {
-//      byte[] receivedBytes = payload.asBytes();
-//    }
-//  }
+
   private final SimpleArrayMap<Long, Payload> incomingFilePayloads = new SimpleArrayMap<>();
   private final SimpleArrayMap<Long, Payload> completedFilePayloads = new SimpleArrayMap<>();
   private final SimpleArrayMap<Long, String> filePayloadFilenames = new SimpleArrayMap<>();
@@ -615,13 +609,16 @@ public void onActivityResult(int requestCode, int resultCode, Intent resultData)
 //      display.setText("Message="+str);
 //    }
 
-//    if (payload.getType() == Payload.Type.BYTES) {
-//      String payloadFilenameMessage = new String(payload.asBytes());
-//      long payloadId = addPayloadFilename(payloadFilenameMessage);
-//      processFilePayload(payloadId);
-//    } else if (payload.getType() == Payload.Type.FILE) {
-//      incomingFilePayloads.put(payload.getId(), payload);
-//    }
+    if (payload.getType() == Payload.Type.BYTES) {
+      String payloadFilenameMessage = new String(payload.asBytes());
+      long payloadId = addPayloadFilename(payloadFilenameMessage);
+//      display.setText("Message="+payloadId);
+      processFilePayload2(payloadId);
+    }
+    else if (payload.getType() == Payload.Type.FILE) {
+      display.setText("Message="+payload.getId());
+      incomingFilePayloads.put(payload.getId(), payload);
+    }
 
   }
 
@@ -635,11 +632,14 @@ public void onActivityResult(int requestCode, int resultCode, Intent resultData)
 
   private void processFilePayload(long payloadId) {
     Payload filePayload = completedFilePayloads.get(payloadId);
+
     String filename = filePayloadFilenames.get(payloadId);
+//    display.setText("Message="+filename);
     if (filePayload != null && filename != null) {
+      display.setText("Message="+filename);
       completedFilePayloads.remove(payloadId);
       filePayloadFilenames.remove(payloadId);
-      Uri uri = filePayload.asFile().asUri();
+      Uri uri = Objects.requireNonNull(filePayload.asFile()).asUri();
       try {
         // Copy the file to a new location.
         InputStream in = getContentResolver().openInputStream(uri);
@@ -652,37 +652,40 @@ public void onActivityResult(int requestCode, int resultCode, Intent resultData)
       }
     }
   }
-//  private void processFilePayload2(long payloadId) {
-//    Payload filePayload = completedFilePayloads.get(payloadId);
-//    String filename = filePayloadFilenames.get(payloadId);
-//    if (filePayload != null && filename != null) {
-//      completedFilePayloads.remove(payloadId);
-//      filePayloadFilenames.remove(payloadId);
-//
-//      // Get the received file (which will be in the Downloads folder)
-//      if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
-//        // Because of https://developer.android.com/preview/privacy/scoped-storage, we are not
-//        // allowed to access filepaths from another process directly. Instead, we must open the
-//        // uri using our ContentResolver.
-//        Uri uri = filePayload.asFile().asUri();
-//        try {
-//          // Copy the file to a new location.
-//          InputStream in = context.getContentResolver().openInputStream(uri);
-//          copyStream(in, new FileOutputStream(new File(context.getCacheDir(), filename)));
-//        } catch (IOException e) {
-//          // Log the error.
-//        } finally {
-//          // Delete the original file.
-//          context.getContentResolver().delete(uri, null, null);
-//        }
-//      } else {
-//        File payloadFile = filePayload.asFile().asJavaFile();
-//
-//        // Rename the file.
-//        payloadFile.renameTo(new File(payloadFile.getParentFile(), filename));
-//      }
-//    }
-//  }
+  private void processFilePayload2(long payloadId) {
+    Payload filePayload = incomingFilePayloads.get(payloadId);
+    String filename = filePayloadFilenames.get(payloadId);
+//    display.setText("Message="+filename);
+//    if(filePayload==null)
+//      display.setText("Message= Not found");
+    if (filePayload != null && filename != null) {
+      incomingFilePayloads.remove(payloadId);
+      filePayloadFilenames.remove(payloadId);
+//      display.setText("Message="+filename);
+      // Get the received file (which will be in the Downloads folder)
+      if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+        // Because of https://developer.android.com/preview/privacy/scoped-storage, we are not
+        // allowed to access filepaths from another process directly. Instead, we must open the
+        // uri using our ContentResolver.
+        Uri uri = Objects.requireNonNull(filePayload.asFile()).asUri();
+        try {
+          // Copy the file to a new location.
+          InputStream in = getContentResolver().openInputStream(uri);
+          copyStream(in, new FileOutputStream(new File(getCacheDir(), filename)));
+        } catch (IOException e) {
+          // Log the error.
+        } finally {
+          // Delete the original file.
+          getContentResolver().delete(uri, null, null);
+        }
+      } else {
+        File payloadFile = filePayload.asFile().asJavaFile();
+
+        // Rename the file.
+        payloadFile.renameTo(new File(payloadFile.getParentFile(), filename));
+      }
+    }
+  }
   private static void copyStream(InputStream in, OutputStream out) throws IOException {
     try {
       byte[] buffer = new byte[1024];
