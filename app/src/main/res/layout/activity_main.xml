@@ -86,6 +86,23 @@
         android:layout_marginBottom="16dp"
         android:padding="8dp"
         android:text="Select" />
+
+    <Button
+        android:id="@+id/send_file"
+        android:layout_width="347dp"
+        android:layout_height="58dp"
+        android:layout_below="@+id/storage_btn"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentBottom="true"
+        android:layout_marginStart="16dp"
+        android:layout_marginLeft="16dp"
+        android:layout_marginTop="32dp"
+        android:layout_marginEnd="10dp"
+        android:layout_marginRight="10dp"
+        android:layout_marginBottom="117dp"
+        android:padding="8dp"
+        android:text="Send file" />
 </RelativeLayout>
 
 <!--<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"-->

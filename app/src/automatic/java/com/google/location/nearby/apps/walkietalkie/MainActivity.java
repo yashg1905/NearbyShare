@@ -38,6 +38,8 @@ import com.google.android.gms.nearby.connection.Strategy;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.util.Random;
 
 
@@ -152,6 +154,33 @@ public class MainActivity extends ConnectionsActivity {
         }
       };
 
+
+  private void sendFile(){
+      Uri uri =dataUri;
+      Payload filePayload;
+      try {
+          // Open the ParcelFileDescriptor for this URI with read access.
+          ParcelFileDescriptor pfd = getContentResolver().openFileDescriptor(uri, "r");
+          filePayload = Payload.fromFile(pfd);
+      } catch (FileNotFoundException e) {
+          Log.e("MyApp", "File not found", e);
+          return;
+      }
+
+      // Construct a simple message mapping the ID of the file payload to the desired filename.
+      String filenameMessage = filePayload.getId() + ":" + uri.getLastPathSegment();
+
+      // Send the filename message as a bytes payload.
+      Payload filenameBytesPayload =
+              Payload.fromBytes(filenameMessage.getBytes());
+
+      if(getState()==State.CONNECTED) {
+          send(filenameBytesPayload);
+
+          // Finally, send the file payload.
+          send(filePayload);
+      }
+  }
   /** For recording audio as the user speaks. */
   @Nullable private AudioRecorder mRecorder;
 
@@ -187,10 +216,24 @@ public class MainActivity extends ConnectionsActivity {
           intent.setType("*/*");
 
           startActivityForResult(intent,10);
+
         }else{
           //permission not allowed
           requestPermission();
 
+        }
+      }
+    });
+    Button sendFile = findViewById(R.id.send_file);
+
+    sendFile.setOnClickListener(new View.OnClickListener() {
+      @Override
+      public void onClick(View v) {
+        if(getState() == State.CONNECTED){
+          sendFile();
+        }
+        else {
+          Toast toast=Toast. makeText(getApplicationContext(),"Device is not connected",Toast.LENGTH_SHORT);
         }
       }
     });
@@ -225,7 +268,7 @@ public class MainActivity extends ConnectionsActivity {
     }else
       ActivityCompat.requestPermissions(MainActivity.this,new String[] {Manifest.permission.WRITE_EXTERNAL_STORAGE},111);
   }
-
+Uri dataUri;
 @Override
 public void onActivityResult(int requestCode, int resultCode, Intent resultData) {
   super.onActivityResult(requestCode, resultCode, resultData);
@@ -234,31 +277,31 @@ public void onActivityResult(int requestCode, int resultCode, Intent resultData)
       && resultData != null) {
 
     // The URI of the file selected by the user.
-    Uri uri = resultData.getData();
-
-    Payload filePayload;
-    try {
-      // Open the ParcelFileDescriptor for this URI with read access.
-      ParcelFileDescriptor pfd = getContentResolver().openFileDescriptor(uri, "r");
-      filePayload = Payload.fromFile(pfd);
-    } catch (FileNotFoundException e) {
-      Log.e("MyApp", "File not found", e);
-      return;
-    }
-
-    // Construct a simple message mapping the ID of the file payload to the desired filename.
-    String filenameMessage = filePayload.getId() + ":" + uri.getLastPathSegment();
-
-    // Send the filename message as a bytes payload.
-    Payload filenameBytesPayload =
-        Payload.fromBytes(filenameMessage.getBytes());
-
-    if(getState()==State.CONNECTED) {
-      send(filenameBytesPayload);
-
-      // Finally, send the file payload.
-      send(filePayload);
-    }
+    dataUri = resultData.getData();
+//    Log.i("yash", uri.toString());
+//    Payload filePayload;
+//    try {
+//      // Open the ParcelFileDescriptor for this URI with read access.
+//      ParcelFileDescriptor pfd = getContentResolver().openFileDescriptor(uri, "r");
+//      filePayload = Payload.fromFile(pfd);
+//    } catch (FileNotFoundException e) {
+//      Log.e("MyApp", "File not found", e);
+//      return;
+//    }
+//
+//    // Construct a simple message mapping the ID of the file payload to the desired filename.
+//    String filenameMessage = filePayload.getId() + ":" + uri.getLastPathSegment();
+//
+//    // Send the filename message as a bytes payload.
+//    Payload filenameBytesPayload =
+//        Payload.fromBytes(filenameMessage.getBytes());
+//
+//    if(getState()==State.CONNECTED) {
+//      send(filenameBytesPayload);
+//
+//      // Finally, send the file payload.
+//      send(filePayload);
+//    }
   }
 }
   public Button getSendBtn() {
