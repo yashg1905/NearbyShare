@@ -159,6 +159,7 @@ public abstract class ConnectionsActivity extends AppCompatActivity {
       };
 
   /** Callbacks for payloads (bytes of data) sent from another device to us. */
+
   private final PayloadCallback mPayloadCallback =
       new PayloadCallback() {
         @Override

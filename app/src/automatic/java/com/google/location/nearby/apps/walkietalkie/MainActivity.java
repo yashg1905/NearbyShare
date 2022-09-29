@@ -5,7 +5,6 @@ import android.Manifest;
 import android.animation.Animator;
 import android.animation.ObjectAnimator;
 import android.content.Context;
-import android.content.res.Configuration;
 import android.media.AudioManager;
 import android.net.Uri;
 import android.os.Build;
@@ -16,6 +15,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.annotation.UiThread;
 import androidx.annotation.WorkerThread;
+import androidx.collection.SimpleArrayMap;
 import androidx.core.content.ContextCompat;
 import androidx.core.view.ViewCompat;
 import android.text.SpannableString;
@@ -31,30 +31,22 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.google.android.gms.nearby.Nearby;
 import com.google.android.gms.nearby.connection.ConnectionInfo;
 import com.google.android.gms.nearby.connection.Payload;
 import com.google.android.gms.nearby.connection.Strategy;
 
+import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.IOException;
-import java.net.URI;
-import java.net.URISyntaxException;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.util.Random;
 
 
-
-import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
-import androidx.core.content.ContextCompat;
 
-import android.Manifest;
-import android.content.Intent;
 import android.content.pm.PackageManager;
-import android.os.Bundle;
-import android.os.Environment;
-import android.view.View;
-import android.widget.Toast;
 
 /**
  * Our WalkieTalkie Activity. This Activity has 3 {@link State}s.
@@ -235,6 +227,7 @@ public class MainActivity extends ConnectionsActivity {
         }
         else {
           Toast toast=Toast. makeText(getApplicationContext(),"Device is not connected",Toast.LENGTH_SHORT);
+          toast.show();
         }
       }
     });
@@ -279,30 +272,6 @@ public void onActivityResult(int requestCode, int resultCode, Intent resultData)
 
     // The URI of the file selected by the user.
     dataUri = resultData.getData();
-//    Log.i("yash", uri.toString());
-//    Payload filePayload;
-//    try {
-//      // Open the ParcelFileDescriptor for this URI with read access.
-//      ParcelFileDescriptor pfd = getContentResolver().openFileDescriptor(uri, "r");
-//      filePayload = Payload.fromFile(pfd);
-//    } catch (FileNotFoundException e) {
-//      Log.e("MyApp", "File not found", e);
-//      return;
-//    }
-//
-//    // Construct a simple message mapping the ID of the file payload to the desired filename.
-//    String filenameMessage = filePayload.getId() + ":" + uri.getLastPathSegment();
-//
-//    // Send the filename message as a bytes payload.
-//    Payload filenameBytesPayload =
-//        Payload.fromBytes(filenameMessage.getBytes());
-//
-//    if(getState()==State.CONNECTED) {
-//      send(filenameBytesPayload);
-//
-//      // Finally, send the file payload.
-//      send(filePayload);
-//    }
   }
 }
   public Button getSendBtn() {
@@ -605,6 +574,9 @@ public void onActivityResult(int requestCode, int resultCode, Intent resultData)
 //      byte[] receivedBytes = payload.asBytes();
 //    }
 //  }
+  private final SimpleArrayMap<Long, Payload> incomingFilePayloads = new SimpleArrayMap<>();
+  private final SimpleArrayMap<Long, Payload> completedFilePayloads = new SimpleArrayMap<>();
+  private final SimpleArrayMap<Long, String> filePayloadFilenames = new SimpleArrayMap<>();
   @Override
   protected void onReceive(Endpoint endpoint, Payload payload) {
     if (payload.getType() == Payload.Type.STREAM) {
@@ -632,13 +604,93 @@ public void onActivityResult(int requestCode, int resultCode, Intent resultData)
       mAudioPlayer = player;
       player.start();
     }
-    if (payload.getType() == Payload.Type.BYTES) {
-      byte[] receivedBytes = payload.asBytes();
-      String str=new String(receivedBytes);
-      display.setText("Message="+str);
-    }
+//    if (payload.getType() == Payload.Type.BYTES) {
+//      byte[] receivedBytes = payload.asBytes();
+//      String str=new String(receivedBytes);
+//      display.setText("Message="+str);
+//    }
+
+//    if (payload.getType() == Payload.Type.BYTES) {
+//      String payloadFilenameMessage = new String(payload.asBytes());
+//      long payloadId = addPayloadFilename(payloadFilenameMessage);
+//      processFilePayload(payloadId);
+//    } else if (payload.getType() == Payload.Type.FILE) {
+//      incomingFilePayloads.put(payload.getId(), payload);
+//    }
+
   }
 
+  private long addPayloadFilename(String payloadFilenameMessage) {
+    String[] parts = payloadFilenameMessage.split(":");
+    long payloadId = Long.parseLong(parts[0]);
+    String filename = parts[1];
+    filePayloadFilenames.put(payloadId, filename);
+    return payloadId;
+  }
+
+  private void processFilePayload(long payloadId) {
+    Payload filePayload = completedFilePayloads.get(payloadId);
+    String filename = filePayloadFilenames.get(payloadId);
+    if (filePayload != null && filename != null) {
+      completedFilePayloads.remove(payloadId);
+      filePayloadFilenames.remove(payloadId);
+      Uri uri = filePayload.asFile().asUri();
+      try {
+        // Copy the file to a new location.
+        InputStream in = getContentResolver().openInputStream(uri);
+        copyStream(in, new FileOutputStream(new File(getCacheDir(), filename)));
+      } catch (IOException e) {
+        // Log the error.
+      } finally {
+        // Delete the original file.
+        getContentResolver().delete(uri, null, null);
+      }
+    }
+  }
+//  private void processFilePayload2(long payloadId) {
+//    Payload filePayload = completedFilePayloads.get(payloadId);
+//    String filename = filePayloadFilenames.get(payloadId);
+//    if (filePayload != null && filename != null) {
+//      completedFilePayloads.remove(payloadId);
+//      filePayloadFilenames.remove(payloadId);
+//
+//      // Get the received file (which will be in the Downloads folder)
+//      if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+//        // Because of https://developer.android.com/preview/privacy/scoped-storage, we are not
+//        // allowed to access filepaths from another process directly. Instead, we must open the
+//        // uri using our ContentResolver.
+//        Uri uri = filePayload.asFile().asUri();
+//        try {
+//          // Copy the file to a new location.
+//          InputStream in = context.getContentResolver().openInputStream(uri);
+//          copyStream(in, new FileOutputStream(new File(context.getCacheDir(), filename)));
+//        } catch (IOException e) {
+//          // Log the error.
+//        } finally {
+//          // Delete the original file.
+//          context.getContentResolver().delete(uri, null, null);
+//        }
+//      } else {
+//        File payloadFile = filePayload.asFile().asJavaFile();
+//
+//        // Rename the file.
+//        payloadFile.renameTo(new File(payloadFile.getParentFile(), filename));
+//      }
+//    }
+//  }
+  private static void copyStream(InputStream in, OutputStream out) throws IOException {
+    try {
+      byte[] buffer = new byte[1024];
+      int read;
+      while ((read = in.read(buffer)) != -1) {
+        out.write(buffer, 0, read);
+      }
+      out.flush();
+    } finally {
+      in.close();
+      out.close();
+    }
+  }
   /** Stops all currently streaming audio tracks. */
   private void stopPlaying() {
     logV("stopPlaying()");
