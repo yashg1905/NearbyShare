@@ -224,12 +224,13 @@ public class MainActivity extends ConnectionsActivity {
         }
       }
     });
-    Button sendFile = findViewById(R.id.send_file);
-
-    sendFile.setOnClickListener(new View.OnClickListener() {
+    Button sendFile_btn = findViewById(R.id.send_file);
+    sendFile_btn.setOnClickListener(new View.OnClickListener() {
       @Override
       public void onClick(View v) {
         if(getState() == State.CONNECTED){
+//          Button sendFile_btn = findViewById(R.id.send_file);
+//          sendFile_btn.setEnabled(true);
           sendFile();
         }
         else {

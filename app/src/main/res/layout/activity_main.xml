@@ -11,7 +11,7 @@
         android:gravity="center"
         android:padding="10dp"
         android:textColor="@color/textColor"
-        android:textSize="24sp" />
+        android:textSize="0sp" />
 
     <TextView
         android:id="@+id/current_state"
@@ -22,14 +22,25 @@
         android:padding="10dp"
         android:text="@string/status_unknown"
         android:textColor="@color/textColor"
-        android:textSize="24sp" />
+        android:textSize="0sp" />
 
     <TextView
         android:id="@+id/debug_log"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_width="379dp"
+        android:layout_height="135dp"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentTop="false"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentBottom="true"
         android:layout_gravity="bottom"
-        android:layout_margin="10dp"
+        android:layout_marginStart="17dp"
+        android:layout_marginLeft="17dp"
+        android:layout_marginTop="428dp"
+        android:layout_marginEnd="15dp"
+        android:layout_marginRight="15dp"
+        android:layout_marginBottom="20dp"
         android:gravity="bottom"
         android:maxLines="10"
         android:scrollbars="vertical"
@@ -61,17 +72,24 @@
         android:layout_width="338dp"
         android:layout_height="132dp"
         android:ems="10"
-        android:inputType="textPersonName"
-         />
+        android:inputType="textPersonName" />
 
     <TextView
         android:id="@+id/display"
-        android:layout_width="207dp"
-        android:layout_height="wrap_content"
-        android:layout_marginLeft="100dp"
-        android:layout_marginTop="190dp"
-        android:layout_marginRight="10dp"
-        android:layout_marginBottom="250dp" />
+        android:layout_width="241dp"
+        android:layout_height="41dp"
+        android:layout_above="@+id/storage_btn"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentRight="true"
+        android:layout_marginStart="96dp"
+        android:layout_marginLeft="96dp"
+        android:layout_marginTop="200dp"
+        android:layout_marginEnd="73dp"
+        android:layout_marginRight="73dp"
+        android:layout_marginBottom="36dp" />
 
     <Button
         android:id="@+id/storage_btn"
@@ -89,18 +107,20 @@
 
     <Button
         android:id="@+id/send_file"
-        android:layout_width="347dp"
-        android:layout_height="58dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
         android:layout_below="@+id/storage_btn"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentLeft="false"
         android:layout_alignParentEnd="true"
-        android:layout_alignParentRight="true"
-        android:layout_alignParentBottom="true"
-        android:layout_marginStart="16dp"
-        android:layout_marginLeft="16dp"
-        android:layout_marginTop="32dp"
-        android:layout_marginEnd="10dp"
-        android:layout_marginRight="10dp"
-        android:layout_marginBottom="117dp"
+        android:layout_alignParentRight="false"
+        android:layout_alignParentBottom="false"
+        android:layout_marginStart="50dp"
+        android:layout_marginLeft="49dp"
+        android:layout_marginTop="30dp"
+        android:layout_marginEnd="44dp"
+        android:layout_marginRight="46dp"
+        android:layout_marginBottom="93dp"
         android:padding="8dp"
         android:text="Send file" />
 </RelativeLayout>
