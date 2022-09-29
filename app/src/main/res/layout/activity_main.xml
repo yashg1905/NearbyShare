@@ -1,0 +1,103 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:keepScreenOn="true">
+
+    <TextView
+        android:id="@+id/previous_state"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:gravity="center"
+        android:padding="10dp"
+        android:textColor="@color/textColor"
+        android:textSize="24sp" />
+
+    <TextView
+        android:id="@+id/current_state"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@color/state_unknown"
+        android:gravity="center"
+        android:padding="10dp"
+        android:text="@string/status_unknown"
+        android:textColor="@color/textColor"
+        android:textSize="24sp" />
+
+    <TextView
+        android:id="@+id/debug_log"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom"
+        android:layout_margin="10dp"
+        android:gravity="bottom"
+        android:maxLines="10"
+        android:scrollbars="vertical"
+        android:textColor="@color/textColor"
+        android:textSize="20sp" />
+
+    <TextView
+        android:id="@+id/name"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:gravity="top|end"
+        android:padding="10dp"
+        android:textColor="@color/textColor"
+        android:textSize="24sp" />
+
+    <Button
+        android:id="@+id/send"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+
+        android:layout_marginRight="10dp"
+        android:layout_marginTop="150dp"
+        android:layout_marginLeft="100dp"
+        android:layout_marginBottom="250dp"
+        android:text="Send" />
+
+    <EditText
+        android:id="@+id/msg"
+        android:layout_width="338dp"
+        android:layout_height="132dp"
+        android:ems="10"
+        android:inputType="textPersonName"
+         />
+
+    <TextView
+        android:id="@+id/display"
+        android:layout_width="207dp"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="100dp"
+        android:layout_marginTop="200dp"
+        android:layout_marginRight="10dp"
+        android:layout_marginBottom="250dp" />
+
+    <Button
+        android:id="@+id/storage_btn"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_centerInParent="true"
+        android:layout_marginStart="16dp"
+        android:layout_marginLeft="16dp"
+        android:layout_marginTop="20dp"
+        android:layout_marginEnd="16dp"
+        android:layout_marginRight="16dp"
+        android:layout_marginBottom="16dp"
+        android:padding="8dp"
+        android:text="Select" />
+</RelativeLayout>
+
+<!--<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"-->
+<!--    xmlns:app="http://schemas.android.com/apk/res-auto"-->
+<!--    xmlns:tools="http://schemas.android.com/tools"-->
+<!--    android:layout_width="match_parent"-->
+<!--    android:layout_height="match_parent"-->
+<!--    android:background="#1DE9B6"-->
+<!--    tools:context=".MainActivity">-->
+
+
+
+
+
+<!--</RelativeLayout>-->
