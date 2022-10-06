@@ -78,7 +78,7 @@ public class ScanQrCodeActivity extends AppCompatActivity {
                 Toast.makeText(this, "Permission granted..", Toast.LENGTH_SHORT).show();
             } else {
                 Toast.makeText(this, "Permission Denined \n You cannot use app without providing permssion"
-                        , Toast.LENGTH_SHORT).show();
+                        ,Toast.LENGTH_SHORT).show();
 
             }
         }

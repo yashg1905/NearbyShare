@@ -180,6 +180,8 @@ public class MainActivity<ScannerLiveView, val> extends ConnectionsActivity {
     {
       dataUri = arrayList.get(n1);
     }
+    else
+      dataUri=null;
   }
   /** For playing audio from other users nearby. */
   @Nullable private AudioPlayer mAudioPlayer;
@@ -217,6 +219,7 @@ public class MainActivity<ScannerLiveView, val> extends ConnectionsActivity {
       public void onClick(View view) {
         Intent i=new Intent(MainActivity.this,ScanQrCodeActivity.class);
         startActivity(i);
+
       }
     });
     storageBtn.setOnClickListener(new View.OnClickListener() {
@@ -322,12 +325,12 @@ public void onActivityResult(int requestCode, int resultCode, Intent resultData)
     mOriginalVolume = audioManager.getStreamVolume(AudioManager.STREAM_MUSIC);
     audioManager.setStreamVolume(
         AudioManager.STREAM_MUSIC, audioManager.getStreamMaxVolume(AudioManager.STREAM_MUSIC), 0);
-
+    if(getState()!=State.CONNECTED)
     setState(State.SEARCHING);
   }
 
   @Override
-  protected void onStop() {
+  protected void onDestroy() {
     // Restore the original volume.
     AudioManager audioManager = (AudioManager) getSystemService(Context.AUDIO_SERVICE);
     audioManager.setStreamVolume(AudioManager.STREAM_MUSIC, mOriginalVolume, 0);
@@ -348,7 +351,7 @@ public void onActivityResult(int requestCode, int resultCode, Intent resultData)
       mCurrentAnimator.cancel();
     }
 
-    super.onStop();
+    super.onDestroy();
   }
 
   @Override
