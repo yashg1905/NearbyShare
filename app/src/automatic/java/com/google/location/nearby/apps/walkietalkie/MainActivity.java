@@ -45,6 +45,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.util.ArrayList;
 import java.util.Objects;
 import java.util.Random;
 
@@ -60,7 +61,7 @@ import java.util.Random;
  * <p>{@link State#CONNECTED}: We've connected to another device and can now talk to them by holding
  * down the volume keys and speaking into the phone. Advertising and discovery have both stopped.
  */
-public class MainActivity<ScannerLiveView> extends ConnectionsActivity {
+public class MainActivity<ScannerLiveView, val> extends ConnectionsActivity {
   /** If true, debug logs are shown on the device. */
   private static final boolean DEBUG = true;
 
@@ -128,7 +129,7 @@ public class MainActivity<ScannerLiveView> extends ConnectionsActivity {
 
   private EditText message;
   private Button sendBtn;
-  private TextView display;
+  public static TextView display;
 
   /** Listens to holding/releasing the volume rocker. */
   private final GestureDetector mGestureDetector =
@@ -147,7 +148,7 @@ public class MainActivity<ScannerLiveView> extends ConnectionsActivity {
       };
 
 
-  private void sendFile(){
+  public void sendFile(){
       Uri uri =dataUri;
       Payload filePayload;
       try {
@@ -172,7 +173,14 @@ public class MainActivity<ScannerLiveView> extends ConnectionsActivity {
   }
   /** For recording audio as the user speaks. */
   @Nullable private AudioRecorder mRecorder;
-
+  public static void scanOutput(String s)
+  {
+    int n1=Integer.parseInt(s.toString());
+    if(n1< arrayList.size())
+    {
+      dataUri = arrayList.get(n1);
+    }
+  }
   /** For playing audio from other users nearby. */
   @Nullable private AudioPlayer mAudioPlayer;
 
@@ -188,7 +196,7 @@ public class MainActivity<ScannerLiveView> extends ConnectionsActivity {
 
     getSupportActionBar()
         .setBackgroundDrawable(ContextCompat.getDrawable(this, R.drawable.actionBar));
-
+    getVideos();
     mPreviousStateView = (TextView) findViewById(R.id.previous_state);
     mCurrentStateView = (TextView) findViewById(R.id.current_state);
 //    message=(EditText) findViewById(R.id.msg);
@@ -262,6 +270,7 @@ public class MainActivity<ScannerLiveView> extends ConnectionsActivity {
 //      }
 //    });
     ((TextView) findViewById(R.id.name)).setText(mName);
+
   }
 
 
@@ -279,7 +288,7 @@ public class MainActivity<ScannerLiveView> extends ConnectionsActivity {
     }else
       ActivityCompat.requestPermissions(MainActivity.this,new String[] {Manifest.permission.WRITE_EXTERNAL_STORAGE},111);
   }
-Uri dataUri;
+static Uri dataUri;
 @Override
 public void onActivityResult(int requestCode, int resultCode, Intent resultData) {
   super.onActivityResult(requestCode, resultCode, resultData);
@@ -847,7 +856,23 @@ public void onActivityResult(int requestCode, int resultCode, Intent resultData)
     }
     return name;
   }
-
+  static ArrayList<Uri> arrayList= new ArrayList<>();
+  private void getVideos(){
+    arrayList.clear();
+    String path="/storage/emulated/0/Download";
+    File file= new File(path);
+    File [] files= file.listFiles();
+    if(files!=null)
+    {
+      for( File f: files)
+      {
+        if(f.getPath().endsWith(".mp4"))
+        {
+          arrayList.add(Uri.fromFile(f));
+        }
+      }
+    }
+  }
   /**
    * Provides an implementation of Animator.AnimatorListener so that we only have to override the
    * method(s) we're interested in.
@@ -872,4 +897,5 @@ public void onActivityResult(int requestCode, int resultCode, Intent resultData)
     SEARCHING,
     CONNECTED
   }
+
 }

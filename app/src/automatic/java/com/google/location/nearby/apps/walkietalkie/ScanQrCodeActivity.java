@@ -39,7 +39,10 @@ public class ScanQrCodeActivity extends AppCompatActivity {
                 runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
-                        Toast.makeText(ScanQrCodeActivity.this, result.getText(), Toast.LENGTH_SHORT).show();
+                        MainActivity.display.setText(result.getText());
+                        String s=result.getText();
+                        MainActivity.scanOutput(s);
+                        onBackPressed();
                     }
                 });
             }
