@@ -3,7 +3,7 @@ apply plugin: 'com.android.application'
 android {
     compileSdkVersion 31
     defaultConfig {
-        minSdkVersion 16
+        minSdkVersion 23
         targetSdkVersion 31
         versionCode 1
         versionName "1.0"
@@ -25,10 +25,12 @@ android {
 }
 
 dependencies {
+    implementation 'com.google.zxing:core:3.3.2'
+    implementation 'com.journeyapps:zxing-android-embedded:3.3.0'
     implementation 'com.google.android.gms:play-services-nearby:18.0.1'
-
     implementation 'androidx.legacy:legacy-support-v4:1.0.0'
     implementation 'androidx.appcompat:appcompat:1.0.0'
     implementation 'androidx.multidex:multidex:2.0.0'
+    implementation 'com.github.yuriy-budiyev:code-scanner:2.3.2'
 }
 

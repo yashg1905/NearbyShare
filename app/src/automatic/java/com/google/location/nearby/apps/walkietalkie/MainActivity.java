@@ -1,23 +1,17 @@
 package com.google.location.nearby.apps.walkietalkie;
-import android.app.Activity;
-import android.content.Intent;
+
 import android.Manifest;
 import android.animation.Animator;
 import android.animation.ObjectAnimator;
+import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.media.AudioManager;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.ParcelFileDescriptor;
-import androidx.annotation.ColorInt;
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.annotation.UiThread;
-import androidx.annotation.WorkerThread;
-import androidx.collection.SimpleArrayMap;
-import androidx.core.content.ContextCompat;
-import androidx.core.view.ViewCompat;
 import android.text.SpannableString;
 import android.text.format.DateFormat;
 import android.text.method.ScrollingMovementMethod;
@@ -31,6 +25,16 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.annotation.ColorInt;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.annotation.UiThread;
+import androidx.annotation.WorkerThread;
+import androidx.collection.SimpleArrayMap;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
+import androidx.core.view.ViewCompat;
+
 import com.google.android.gms.nearby.connection.ConnectionInfo;
 import com.google.android.gms.nearby.connection.Payload;
 import com.google.android.gms.nearby.connection.Strategy;
@@ -41,14 +45,8 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.nio.charset.StandardCharsets;
 import java.util.Objects;
 import java.util.Random;
-
-
-import androidx.core.app.ActivityCompat;
-
-import android.content.pm.PackageManager;
 
 /**
  * Our WalkieTalkie Activity. This Activity has 3 {@link State}s.
@@ -62,7 +60,7 @@ import android.content.pm.PackageManager;
  * <p>{@link State#CONNECTED}: We've connected to another device and can now talk to them by holding
  * down the volume keys and speaking into the phone. Advertising and discovery have both stopped.
  */
-public class MainActivity extends ConnectionsActivity {
+public class MainActivity<ScannerLiveView> extends ConnectionsActivity {
   /** If true, debug logs are shown on the device. */
   private static final boolean DEBUG = true;
 
@@ -178,26 +176,41 @@ public class MainActivity extends ConnectionsActivity {
   /** For playing audio from other users nearby. */
   @Nullable private AudioPlayer mAudioPlayer;
 
+//  private ScannerLiveView camera;
+//  private TextView scannedTV;
   /** The phone's original media volume. */
   private int mOriginalVolume;
-
+//  private Button generateBtn, scanBtn;
   @Override
   protected void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
     setContentView(R.layout.activity_main);
+
     getSupportActionBar()
         .setBackgroundDrawable(ContextCompat.getDrawable(this, R.drawable.actionBar));
 
     mPreviousStateView = (TextView) findViewById(R.id.previous_state);
     mCurrentStateView = (TextView) findViewById(R.id.current_state);
-    message=(EditText) findViewById(R.id.msg);
-    sendBtn=(Button) findViewById(R.id.send);
+//    message=(EditText) findViewById(R.id.msg);
+//    sendBtn=(Button) findViewById(R.id.send);
     display= (TextView) findViewById(R.id.display);
     mDebugLogView = (TextView) findViewById(R.id.debug_log);
     mDebugLogView.setVisibility(DEBUG ? View.VISIBLE : View.GONE);
     mDebugLogView.setMovementMethod(new ScrollingMovementMethod());
     Button storageBtn = findViewById(R.id.storage_btn);
-
+    Button generateBtn=findViewById(R.id.qr_generator);
+    Button scanBtn=findViewById(R.id.qr_reader);
+    generateBtn.setOnClickListener(v -> {
+        Intent i=new Intent(MainActivity.this,GenerateQrCodeActivity.class);
+        startActivity(i);
+    });
+    scanBtn.setOnClickListener(new View.OnClickListener() {
+      @Override
+      public void onClick(View view) {
+        Intent i=new Intent(MainActivity.this,ScanQrCodeActivity.class);
+        startActivity(i);
+      }
+    });
     storageBtn.setOnClickListener(new View.OnClickListener() {
       @Override
       public void onClick(View v) {
@@ -211,7 +224,7 @@ public class MainActivity extends ConnectionsActivity {
         }else{
           //permission not allowed
           requestPermission();
-
+          onClick(v);
         }
       }
     });
@@ -236,18 +249,18 @@ public class MainActivity extends ConnectionsActivity {
       }
     });
     mName = generateRandomName();
-    sendBtn.setOnClickListener(new View.OnClickListener() {
-      public void onClick(View v) {
-        String s=message.getText().toString();
-        byte[] br = s.getBytes();
-        Payload bytesPayload = Payload.fromBytes(br);
-        send(bytesPayload);
-        if (bytesPayload.getType() == Payload.Type.BYTES) {
-          display.setText("Check="+s );
-        }
-        display.setText("Send="+s );
-      }
-    });
+//    sendBtn.setOnClickListener(new View.OnClickListener() {
+//      public void onClick(View v) {
+//        String s=message.getText().toString();
+//        byte[] br = s.getBytes();
+//        Payload bytesPayload = Payload.fromBytes(br);
+//        send(bytesPayload);
+//        if (bytesPayload.getType() == Payload.Type.BYTES) {
+//          display.setText("Check="+s );
+//        }
+//        display.setText("Send="+s );
+//      }
+//    });
     ((TextView) findViewById(R.id.name)).setText(mName);
   }
 
@@ -618,6 +631,7 @@ public void onActivityResult(int requestCode, int resultCode, Intent resultData)
     else if (payload.getType() == Payload.Type.FILE) {
       display.setText("Message="+payload.getId());
       incomingFilePayloads.put(payload.getId(), payload);
+
     }
 
   }
@@ -652,6 +666,7 @@ public void onActivityResult(int requestCode, int resultCode, Intent resultData)
       }
     }
   }
+
   private void processFilePayload2(long payloadId) {
     Payload filePayload = incomingFilePayloads.get(payloadId);
     String filename = filePayloadFilenames.get(payloadId);

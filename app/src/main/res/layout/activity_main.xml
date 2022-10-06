@@ -26,6 +26,24 @@
         android:textColor="@color/textColor"
         android:textSize="0sp" />
 
+    <Button
+        android:id="@+id/qr_reader"
+        android:layout_width="172dp"
+        android:layout_height="76dp"
+        android:layout_above="@+id/storage_btn"
+        android:layout_alignTop="@+id/display"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentRight="true"
+        android:layout_marginStart="217dp"
+        android:layout_marginLeft="217dp"
+        android:layout_marginTop="160dp"
+        android:layout_marginEnd="22dp"
+        android:layout_marginRight="22dp"
+        android:layout_marginBottom="77dp"
+        android:text="QR Scanner" />
+
     <TextView
         android:id="@+id/debug_log"
         android:layout_width="379dp"
@@ -51,47 +69,41 @@
 
     <TextView
         android:id="@+id/name"
-        android:layout_width="wrap_content"
+        android:layout_width="129dp"
         android:layout_height="wrap_content"
-        android:gravity="top|end"
+        android:layout_above="@+id/qr_generator"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentRight="true"
+        android:layout_marginStart="33dp"
+        android:layout_marginLeft="33dp"
+        android:layout_marginTop="117dp"
+        android:layout_marginEnd="249dp"
+        android:layout_marginRight="249dp"
+        android:layout_marginBottom="-141dp"
+        android:gravity="end"
         android:padding="10dp"
         android:textColor="@color/textColor"
         android:textSize="24sp" />
 
-    <Button
-        android:id="@+id/send"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-
-        android:layout_marginLeft="100dp"
-        android:layout_marginTop="150dp"
-        android:layout_marginRight="10dp"
-        android:layout_marginBottom="250dp"
-        android:text="Send" />
-
-    <EditText
-        android:id="@+id/msg"
-        android:layout_width="338dp"
-        android:layout_height="132dp"
-        android:ems="10"
-        android:inputType="textPersonName" />
-
     <TextView
         android:id="@+id/display"
-        android:layout_width="241dp"
-        android:layout_height="41dp"
+        android:layout_width="170dp"
+        android:layout_height="50dp"
         android:layout_above="@+id/storage_btn"
         android:layout_alignParentStart="true"
         android:layout_alignParentLeft="true"
         android:layout_alignParentTop="true"
         android:layout_alignParentEnd="true"
         android:layout_alignParentRight="true"
-        android:layout_marginStart="96dp"
-        android:layout_marginLeft="96dp"
-        android:layout_marginTop="200dp"
-        android:layout_marginEnd="73dp"
-        android:layout_marginRight="73dp"
-        android:layout_marginBottom="36dp" />
+        android:layout_marginStart="121dp"
+        android:layout_marginLeft="121dp"
+        android:layout_marginTop="29dp"
+        android:layout_marginEnd="119dp"
+        android:layout_marginRight="119dp"
+        android:layout_marginBottom="243dp" />
 
     <Button
         android:id="@+id/storage_btn"
@@ -100,7 +112,6 @@
         android:layout_centerInParent="true"
         android:layout_marginStart="16dp"
         android:layout_marginLeft="16dp"
-        android:layout_marginTop="20dp"
         android:layout_marginEnd="16dp"
         android:layout_marginRight="16dp"
         android:layout_marginBottom="16dp"
@@ -117,27 +128,31 @@
         android:layout_alignParentEnd="true"
         android:layout_alignParentRight="false"
         android:layout_alignParentBottom="false"
-        android:layout_marginStart="50dp"
+        android:layout_marginStart="54dp"
         android:layout_marginLeft="49dp"
-        android:layout_marginTop="30dp"
-        android:layout_marginEnd="44dp"
+        android:layout_marginTop="58dp"
+        android:layout_marginEnd="39dp"
         android:layout_marginRight="46dp"
         android:layout_marginBottom="93dp"
         android:padding="8dp"
         android:text="Send file" />
 
+    <Button
+        android:id="@+id/qr_generator"
+        android:layout_width="157dp"
+        android:layout_height="76dp"
+        android:layout_above="@+id/storage_btn"
+        android:layout_alignTop="@+id/display"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentRight="true"
+        android:layout_marginStart="32dp"
+        android:layout_marginLeft="32dp"
+        android:layout_marginTop="160dp"
+        android:layout_marginEnd="222dp"
+        android:layout_marginRight="222dp"
+        android:layout_marginBottom="77dp"
+        android:text="QR generator" />
+
 </RelativeLayout>
-
-<!--<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"-->
-<!--    xmlns:app="http://schemas.android.com/apk/res-auto"-->
-<!--    xmlns:tools="http://schemas.android.com/tools"-->
-<!--    android:layout_width="match_parent"-->
-<!--    android:layout_height="match_parent"-->
-<!--    android:background="#1DE9B6"-->
-<!--    tools:context=".MainActivity">-->
-
-
-
-
-
-<!--</RelativeLayout>-->
